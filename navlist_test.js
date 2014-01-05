@@ -187,6 +187,8 @@ THE SOFTWARE.
 		testContent(ls, [5,5,2,1]);
 		ls.insert(3);
 		testContent(ls, [5,5,3,2,1]);
+		var ls = new NavListSorted.fromArray([7,4,8,3,2]);
+		testContent(ls,[2,3,4,7,8]);
 	}
 	test();
 })();

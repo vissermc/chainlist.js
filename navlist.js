@@ -100,7 +100,7 @@ NavList.Node.prototype={
 		return this.takeRange(list,list.indexNode(count));
 	},
 	cloneRange: function(end) {
-		var ll=new NavList();
+		var ll=this.list()._initClone();
 		for(var n=this._startNode(); n!=end;n=n._next)
 			ll.insert(n._elem);
 		return ll;
@@ -109,7 +109,7 @@ NavList.Node.prototype={
 		return this.cloneRange(this.indexNode(count));
 	},
 	shiftRange: function(end) {
-		var ll=new NavList();
+		var ll=this.list()._initClone();
 		ll.takeRange(this,end);
 		return ll;
 	},
@@ -206,7 +206,7 @@ NavList.Node.prototype={
 	},
 	isList: function() { return this._isList; },
 	reverse: function() {
-		var r=new NavList();
+		var r=new NavList(); // no need for _initClone
 		while (!this._next._isList)
 			r.takeSome(this,1);
 		this.take(r);
@@ -273,6 +273,7 @@ NavList.prototype._testInvariants = function() {
 	});
 	assert_equal(count,this.count());
 };
+NavList.prototype._initClone = function() { return new NavList(); }
 NavList.fromArray = function(array,parent) {
 	var ll = new NavList(parent);
 	ll.insertArray(array);
@@ -298,6 +299,12 @@ NavListSorted.prototype.insert = function(elem) {
 NavListSorted.prototype.insertAt = null; //disable
 NavListSorted.prototype.unshift = null; //disable
 NavListSorted.prototype.push = null; //disable
+NavListSorted.prototype._initClone = function() { return new NavListSorted(null,this._compareFunc); }
+NavListSorted.fromArray = function(array,parent,compareFunc) {
+	var ll = new NavListSorted(parent,compareFunc);
+	ll.insertArray(array);
+	return ll;
+}
 
 NavListSorted.Node = function(prev, elem) {
 	NavList.Node.call(this,prev,elem);
