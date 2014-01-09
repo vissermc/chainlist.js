@@ -1,7 +1,7 @@
 NavList.js
 ==========
 
-Use this container type when the elements needs quick access to its siblings and/or its parent container or associated parent element.
+Use this container type when the elements needs quick access to its siblings and/or its parent container or associated parent element. Hence, its navigability is the very similar to the DOM.
 
 It is implemented as a doubly linked list, therefore navigating n elements away takes O(n) time. Additionally, there is fast (O(1)) access to the parent list, the last element, and the element count.
 
