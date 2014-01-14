@@ -116,6 +116,9 @@ NavList.Node.prototype={
 	shiftSome: function(count) {
 		return this.shiftRange(this.indexNode(count));
 	},
+	truncate: function() {
+		return this.shiftRange(this._list);
+	},
 	shift: function() { return this.shiftSome(1).index(0); },
 	slice: function(begin,end) {
 		return this.indexNode(begin).cloneRange(end!=null?this.indexNode(end):this._list);
@@ -134,6 +137,7 @@ NavList.Node.prototype={
 		return this.lastNode().remove();
 	},
 	insert: function(elem) {
+		//console.log("Insert: "+(new Error).stack.split("\n").slice(2).join("\n"));
 		return new NavList.Node(this._prev,elem);
 	},
 	insertArray: function(elems) {
@@ -254,7 +258,8 @@ NavList.prototype = Object.create (NavList.Node.prototype);
 NavList.prototype.constructor = NavList;
 NavList.prototype._isList = true;
 NavList.prototype.list = function() { return this; };
-NavList.prototype.empty = function() { return this.shiftRange(this._list); };
+NavList.prototype.empty = NavList.Node.prototype.truncate;
+NavList.prototype.truncate = function() {}
 NavList.prototype.remove = null;
 NavList.prototype.count = function() { return this._length; }
 NavList.prototype.clone = function() { return this.cloneRange(this);};
