@@ -1,7 +1,7 @@
 NavList.js
 ==========
 
-Use this container type when the elements needs quick access to its siblings and/or its parent container or associated parent element.
+Use this container type when the elements needs quick access to its siblings and/or its parent container or associated parent element. Hence, its navigability is the very similar to the DOM.
 
 It is implemented as a doubly linked list, therefore navigating n elements away takes O(n) time. Additionally, there is fast (O(1)) access to the parent list, the last element, and the element count.
 
@@ -13,6 +13,23 @@ NavList inherits from NavList.Node as well, being a node in the list itself. Som
 A lot of functions are both available from a node and a container.
 
 Also available, a sorted variant of NavList called NavListSorted. It does not have a unshift, push, or insertAt function. Only insert and insertArray can be used to insert elements. They will be inserted at the correct sorted location according the comparison function supplied to the constructor.
+
+Example
+-------
+<pre>
+var list = LinkedList.fromArray([6,3,7,8])
+var thirdNode = list.indexNode(2)  
+thirdNode.item()==7  
+thirdNode.next().item()==8  
+thirdNode.list() == list  
+</pre>
+<pre>
+var list2 = new LinkedList();  
+var elemX = {}  
+elemX.node = list2.insertAt(0,elemX); // also store a reference to the node from within the elem object.  
+...  
+elemX.node.next().item() // travel from the item to an adjacent item
+</pre>
 
 List-only functions
 -------------------
@@ -77,9 +94,9 @@ Common functions
 * <code>pos ( n )</code>  
 	returns n'th successor or -n'th predecessor node. This list itself is also node that might be returned. This function wraps around.
 * <code>next ()</code>  
-	returns the next elem, or the list if there is no next.
+	returns the next node, or the list if there is no next.
 * <code>prev ()</code>  
-	returns the previous elem, or the list if there is no previous.
+	returns the previous node, or the list if there is no previous.
 * <code>countRange ( end )</code>
 * <code>isList ()</code>
 * <code>reverse ()</code>
