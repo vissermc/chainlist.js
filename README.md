@@ -17,14 +17,14 @@ Also available, a sorted variant of ChainList called ChainListSorted. It does no
 Example
 -------
 <pre>
-var list = LinkedList.fromArray([6,3,7,8])
+var list = ChainList.fromArray([6,3,7,8])
 var thirdNode = list.indexNode(2)  
 thirdNode.item()==7  
 thirdNode.next().item()==8  
 thirdNode.list() == list  
 </pre>
 <pre>
-var list2 = new LinkedList();  
+var list2 = new ChainList();  
 var elemX = {}  
 elemX.node = list2.insertAt(0,elemX); // also store a reference to the node from within the elem object.  
 ...  
@@ -33,10 +33,10 @@ elemX.node.next().item() // travel from the item to an adjacent item
 
 List-only functions
 -------------------
-* <code>LinkedList( parent )</code>  
+* <code>ChainList( parent )</code>  
   Constructor, where a parent aggregator can be supplied which can be accessed using 'list.parent()'.
-* <code>LinkedListSorted( parent, compareFunc )</code>  
-  Constructor for a sorted LinkedList, where the compareFunc(a,b) will determine where the element will be placed: before the first element b where the function returns a positive number.
+* <code>ChainListSorted( parent, compareFunc )</code>  
+  Constructor for a sorted ChainList, where the compareFunc(a,b) will determine where the element will be placed: before the first element b where the function returns a positive number.
 * <code>empty ()</code>  
   Removes all elements from the list.
 * <code>count ()</code>
@@ -46,11 +46,11 @@ List-only functions
 * <code>insertAt ( index,elem )</code>  
   Inserts at index 'index', starting from zero, the element in this list and returns the created node. Negative indices will insert backwards, where -1 will append the item.
 * <code>removeAt ( index )</code>
-* <code>LinkedList.fromArray ( array,parent )</code>
+* <code>ChainList.fromArray ( array,parent )</code>
 
 Node-only functions
 -------------------
-* <code>LinkedList.Node ( prev, elem *optional* )</code>
+* <code>ChainList.Node ( prev, elem *optional* )</code>
 * <code>list ()</code>
 * <code>elem ()</code>
 * <code>remove ()</code>
