@@ -30,7 +30,7 @@ THE SOFTWARE.
 	}
 	var makeList = function(array,parent) {
 		var a=array.slice(0);
-		var l = NavList.fromArray(a,parent);
+		var l = ChainList.fromArray(a,parent);
 		assert_equal(a,array);
 		testContent(l,array);
 		return l;
@@ -78,26 +78,26 @@ THE SOFTWARE.
 		assert_equal(l.lastNode().elem(),'c');
 		assert_equal(l.last(),'c');
 
-		l=NavList.fromArray(['a','b','c'],'x');
-		l2=NavList.fromArray([],'y');
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l2=ChainList.fromArray([],'y');
 		l2.takeRange(l,l);
 		testContent(l,[]);
 		testContent(l2,['a','b','c']);
 
-		l=NavList.fromArray(['a','b','c'],'x');
-		l2=NavList.fromArray([],'y');
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l2=ChainList.fromArray([],'y');
 		l2.takeRange(l,l.indexNode(0));
 		testContent(l,['a','b','c']);
 		testContent(l2,[]);
 
-		l=NavList.fromArray(['a','b','c'],'x');
-		l2=NavList.fromArray([],'y');
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l2=ChainList.fromArray([],'y');
 		l2.takeRange(l,l.indexNode(1));
 		testContent(l,['b','c']);
 		testContent(l2,['a']);
 
-		l=NavList.fromArray(['a','b','c'],'x');
-		l2=NavList.fromArray([],'y');
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l2=ChainList.fromArray([],'y');
 		l2.takeRange(l,l.indexNode(2));
 		testContent(l,['c']);
 		testContent(l2,['a','b']);
@@ -110,7 +110,7 @@ THE SOFTWARE.
 		l.lastNode().insert("b");
 		testContent(l, ["a","b","c"]);
 		assert_equal(l.index(1),"b");
-		var l2=new NavList();
+		var l2=new ChainList();
 		l2.takeRange(l,l.indexNode(1));
 		assert_equal(l2.toArray(),["a"]);
 		testContent(l,["b","c"]);
@@ -162,7 +162,7 @@ THE SOFTWARE.
 		l.insertAt(l._length,"q");
 		testContent(l, ["x","a","f","g","z","y","q"]);
 
-		var ls = new NavListSorted();
+		var ls = new ChainListSorted();
 		testContent(ls, []);
 		ls.insert(2);
 		testContent(ls, [2]);
@@ -175,7 +175,7 @@ THE SOFTWARE.
 		ls.insert(3);
 		testContent(ls, [1,2,3,5,5]);
 
-		var ls = new NavListSorted(null,function(a,b) { return b-a; } );
+		var ls = new ChainListSorted(null,function(a,b) { return b-a; } );
 		testContent(ls, []);
 		ls.insert(2);
 		testContent(ls, [2]);
@@ -187,7 +187,7 @@ THE SOFTWARE.
 		testContent(ls, [5,5,2,1]);
 		ls.insert(3);
 		testContent(ls, [5,5,3,2,1]);
-		var ls = new NavListSorted.fromArray([7,4,8,3,2]);
+		var ls = new ChainListSorted.fromArray([7,4,8,3,2]);
 		testContent(ls,[2,3,4,7,8]);
 	}
 	test();

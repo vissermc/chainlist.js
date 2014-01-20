@@ -1,18 +1,18 @@
-NavList.js
+ChainList.js
 ==========
 
 Use this container type when the elements needs quick access to its siblings and/or its parent container or associated parent element. Hence, its navigability is the very similar to the DOM.
 
 It is implemented as a doubly linked list, therefore navigating n elements away takes O(n) time. Additionally, there is fast (O(1)) access to the parent list, the last element, and the element count.
 
-Concrete elements can either inherit from NavList.Node or aggregate it (by passing itself as parameter, and adding the generated node as a property.
-Similarly, a concrete container can either inherit from NavList or aggregate it.
+Concrete elements can either inherit from ChainList.Node or aggregate it (by passing itself as parameter, and adding the generated node as a property.
+Similarly, a concrete container can either inherit from ChainList or aggregate it.
 
-NavList inherits from NavList.Node as well, being a node in the list itself. Some functions, such as 'pos', 'next', and 'prev' can reach this container node.
+ChainList inherits from ChainList.Node as well, being a node in the list itself. Some functions, such as 'pos', 'next', and 'prev' can reach this container node.
 
 A lot of functions are both available from a node and a container.
 
-Also available, a sorted variant of NavList called NavListSorted. It does not have a unshift, push, or insertAt function. Only insert and insertArray can be used to insert elements. They will be inserted at the correct sorted location according the comparison function supplied to the constructor.
+Also available, a sorted variant of ChainList called ChainListSorted. It does not have a unshift, push, or insertAt function. Only insert and insertArray can be used to insert elements. They will be inserted at the correct sorted location according the comparison function supplied to the constructor.
 
 Example
 -------

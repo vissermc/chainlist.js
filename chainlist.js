@@ -30,7 +30,7 @@ if (typeof Object.create !== 'function') {
     };
 }
 
-function NavList(parent,compareFunc) {
+function ChainList(parent,compareFunc) {
 	this._next=this._prev=this;
 	this._parent=parent||this;
 	this._list=this;
@@ -38,7 +38,7 @@ function NavList(parent,compareFunc) {
 	this._compareFunc = compareFunc
 }
 
-NavList.Node = function(prev, elem/*optional*/) { // A class captured in the NavList namespace, which is also the base class of a Linked List
+ChainList.Node = function(prev, elem/*optional*/) { // A class captured in the ChainList namespace, which is also the base class of a Linked List
 	var t=prev._next;
 	prev._next=this;
 	this._prev=prev;
@@ -49,8 +49,8 @@ NavList.Node = function(prev, elem/*optional*/) { // A class captured in the Nav
 	this._list._length++;
 }
 
-NavList.Node.prototype={
-	constructor: NavList.Node,
+ChainList.Node.prototype={
+	constructor: ChainList.Node,
 	list: function() {
 		return this._list;
 	},
@@ -138,7 +138,7 @@ NavList.Node.prototype={
 	},
 	insert: function(elem) {
 		//console.log("Insert: "+(new Error).stack.split("\n").slice(2).join("\n"));
-		return new NavList.Node(this._prev,elem);
+		return new ChainList.Node(this._prev,elem);
 	},
 	insertArray: function(elems) {
 		var n=this;
@@ -210,7 +210,7 @@ NavList.Node.prototype={
 	},
 	isList: function() { return this._isList; },
 	reverse: function() {
-		var r=new NavList(); // no need for _initClone
+		var r=new ChainList(); // no need for _initClone
 		while (!this._next._isList)
 			r.takeSome(this,1);
 		this.take(r);
@@ -254,20 +254,20 @@ NavList.Node.prototype={
 	}
 };
 
-NavList.prototype = Object.create (NavList.Node.prototype);
-NavList.prototype.constructor = NavList;
-NavList.prototype._isList = true;
-NavList.prototype.list = function() { return this; };
-NavList.prototype.empty = NavList.Node.prototype.truncate;
-NavList.prototype.truncate = function() {}
-NavList.prototype.remove = null;
-NavList.prototype.count = function() { return this._length; }
-NavList.prototype.clone = function() { return this.cloneRange(this);};
-NavList.prototype._startNode = function() { return this._next; };
-NavList.prototype.elem = function() { return null };
-NavList.prototype.insertAt = function(index,elem) { return this.pos(index+1).insert(elem); } // 0 = begin, length or -1=end
-NavList.prototype.removeAt = function(index) { return this.index(index).remove(); } // 0 = first, -1=last
-NavList.prototype._testInvariants = function() {
+ChainList.prototype = Object.create (ChainList.Node.prototype);
+ChainList.prototype.constructor = ChainList;
+ChainList.prototype._isList = true;
+ChainList.prototype.list = function() { return this; };
+ChainList.prototype.empty = ChainList.Node.prototype.truncate;
+ChainList.prototype.truncate = function() {}
+ChainList.prototype.remove = null;
+ChainList.prototype.count = function() { return this._length; }
+ChainList.prototype.clone = function() { return this.cloneRange(this);};
+ChainList.prototype._startNode = function() { return this._next; };
+ChainList.prototype.elem = function() { return null };
+ChainList.prototype.insertAt = function(index,elem) { return this.pos(index+1).insert(elem); } // 0 = begin, length or -1=end
+ChainList.prototype.removeAt = function(index) { return this.index(index).remove(); } // 0 = first, -1=last
+ChainList.prototype._testInvariants = function() {
 	var count=0;
 	this.forEach(function(elem,index,node) {
 		count++;
@@ -278,44 +278,44 @@ NavList.prototype._testInvariants = function() {
 	});
 	assert_equal(count,this.count());
 };
-NavList.prototype._initClone = function() { return new NavList(); }
-NavList.fromArray = function(array,parent) {
-	var ll = new NavList(parent);
+ChainList.prototype._initClone = function() { return new ChainList(); }
+ChainList.fromArray = function(array,parent) {
+	var ll = new ChainList(parent);
 	ll.insertArray(array);
 	return ll;
 }
 
-function NavListSorted(parent,compareFunc) {
-	NavList.call(this,parent);
-	this._compareFunc = compareFunc || (parent && parent.compareFunc) || NavListSorted.defaultCompareFunc;
+function ChainListSorted(parent,compareFunc) {
+	ChainList.call(this,parent);
+	this._compareFunc = compareFunc || (parent && parent.compareFunc) || ChainListSorted.defaultCompareFunc;
 }
-NavListSorted.defaultCompareFunc = function(a,b) {
+ChainListSorted.defaultCompareFunc = function(a,b) {
 	return a-b;
 }
-NavListSorted.prototype = Object.create (NavList.prototype);
-NavListSorted.prototype.constructor = NavListSorted;
-NavListSorted.prototype.insert = function(elem) {
+ChainListSorted.prototype = Object.create (ChainList.prototype);
+ChainListSorted.prototype.constructor = ChainListSorted;
+ChainListSorted.prototype.insert = function(elem) {
 	var node = this.forEach(function(e,index,node) {
 		if (this._compareFunc(elem,e)<=0)
 			return node;
 	}) || this;
-	return new NavListSorted.Node(node._prev,elem);
+	return new ChainListSorted.Node(node._prev,elem);
 };
-NavListSorted.prototype.insertAt = null; //disable
-NavListSorted.prototype.unshift = null; //disable
-NavListSorted.prototype.push = null; //disable
-NavListSorted.prototype._initClone = function() { return new NavListSorted(null,this._compareFunc); }
-NavListSorted.fromArray = function(array,parent,compareFunc) {
-	var ll = new NavListSorted(parent,compareFunc);
+ChainListSorted.prototype.insertAt = null; //disable
+ChainListSorted.prototype.unshift = null; //disable
+ChainListSorted.prototype.push = null; //disable
+ChainListSorted.prototype._initClone = function() { return new ChainListSorted(null,this._compareFunc); }
+ChainListSorted.fromArray = function(array,parent,compareFunc) {
+	var ll = new ChainListSorted(parent,compareFunc);
 	ll.insertArray(array);
 	return ll;
 }
 
-NavListSorted.Node = function(prev, elem) {
-	NavList.Node.call(this,prev,elem);
+ChainListSorted.Node = function(prev, elem) {
+	ChainList.Node.call(this,prev,elem);
 };
-NavListSorted.Node.prototype = Object.create (NavList.Node.prototype);
-NavListSorted.Node.prototype.constructor = NavListSorted.Node;
-NavListSorted.Node.prototype.insert = function(elem) {
+ChainListSorted.Node.prototype = Object.create (ChainList.Node.prototype);
+ChainListSorted.Node.prototype.constructor = ChainListSorted.Node;
+ChainListSorted.Node.prototype.insert = function(elem) {
 	return this.list().insert(elem);
 }
