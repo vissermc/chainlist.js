@@ -85,10 +85,22 @@ THE SOFTWARE.
 		testContent(l2,['a','b','c']);
 
 		l=ChainList.fromArray(['a','b','c'],'x');
+		l2=ChainList.fromArray(['d'],'y');
+		l.indexNode(1).take(l2);
+		testContent(l2,[]);
+		testContent(l,['a','d','b','c']);
+
+		l=ChainList.fromArray(['a','b','c'],'x');
 		l2=ChainList.fromArray([],'y');
 		l2.takeRange(l,l.indexNode(0));
 		testContent(l,['a','b','c']);
 		testContent(l2,[]);
+
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l2=ChainList.fromArray(['d','e'],'y');
+		l.takeSome(l2,1);
+		testContent(l2,['e']);
+		testContent(l,['a','b','c','d']);
 
 		l=ChainList.fromArray(['a','b','c'],'x');
 		l2=ChainList.fromArray([],'y');
@@ -125,6 +137,18 @@ THE SOFTWARE.
 		l=ChainList.fromArray(['a','b','c'],'x');
 		l.removeAt(2);
 		testContent(l,['a','b']);
+
+		l=ChainList.fromArray([]);
+		l.reverse();
+		testContent(l,[]);
+
+		l=ChainList.fromArray(['a'],'x');
+		l.reverse();
+		testContent(l,['a']);
+
+		l=ChainList.fromArray(['a','b'],'x');
+		l.reverse();
+		testContent(l,['b','a']);
 
 		l=makeList([],'p');
 		l.insert("a");

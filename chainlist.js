@@ -85,7 +85,7 @@ ChainList.Node.prototype={
 		end._prev=start._prev;
 		start._prev._next=end;
 
-		var tn=this._startNode();
+		var tn=this;
 		tn._prev._next=start;
 		start._prev = tn._prev;
 
@@ -212,7 +212,7 @@ ChainList.Node.prototype={
 	reverse: function() {
 		var r=new ChainList(); // no need for _initClone
 		while (!this._next._isList)
-			r.takeSome(this,1);
+			r._next.takeSome(this,1);
 		this.take(r);
 		return this;
 	},
