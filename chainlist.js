@@ -131,7 +131,7 @@ ChainList.Node.prototype={
 		return r;
 	},
 	remove: function() {
-		return this._prev.shiftSome(1).index(0);
+		return this.shiftSome(1).index(0);
 	},
 	pop: function() {
 		return this.lastNode().remove();
@@ -266,7 +266,7 @@ ChainList.prototype.clone = function() { return this.cloneRange(this);};
 ChainList.prototype._startNode = function() { return this._next; };
 ChainList.prototype.elem = function() { return null };
 ChainList.prototype.insertAt = function(index,elem) { return this.pos(index+1).insert(elem); } // 0 = begin, length or -1=end
-ChainList.prototype.removeAt = function(index) { return this.index(index).remove(); } // 0 = first, -1=last
+ChainList.prototype.removeAt = function(index) { return this.indexNode(index).remove(); } // 0 = first, -1=last
 ChainList.prototype._testInvariants = function() {
 	var count=0;
 	this.forEach(function(elem,index,node) {

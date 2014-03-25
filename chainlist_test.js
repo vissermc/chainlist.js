@@ -102,6 +102,30 @@ THE SOFTWARE.
 		testContent(l,['c']);
 		testContent(l2,['a','b']);
 
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l.indexNode(0).remove();
+		testContent(l,['b','c']);
+
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l.removeAt(0);
+		testContent(l,['b','c']);
+
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l.indexNode(1).remove();
+		testContent(l,['a','c']);
+
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l.removeAt(1);
+		testContent(l,['a','c']);
+
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l.indexNode(2).remove();
+		testContent(l,['a','b']);
+
+		l=ChainList.fromArray(['a','b','c'],'x');
+		l.removeAt(2);
+		testContent(l,['a','b']);
+
 		l=makeList([],'p');
 		l.insert("a");
 		testContent(l, ["a"]);
