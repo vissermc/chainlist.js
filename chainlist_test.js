@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-(function() {
+function chainlist_test() {
 
 	var testContent = function(l,c) {
 		assert_equal(l.toArray(),c);
@@ -36,207 +36,246 @@ THE SOFTWARE.
 		return l;
 	}
 
-	function test() {
-		var l, l2;
+	var tests = {
+		test_parent: function() {
+			var l=makeList([]);
+			assert(l.parent()==l);
+			l=makeList(['a','b','c'],'x');
+			assert(l.parent()=='x');
+		},
+		test_pos_empty: function() {
+			var l=makeList([]);
+			assert(l.parent()==l);
+			assert_equal(l.pos(0)._isList,true);
+			assert_equal(l.pos(1)._isList,true);
+			assert_equal(l.pos(-1)._isList,true);
+			assert_equal(l.pos(0).elem(),null);
+		},
+		test_pos_nonEmpty: function() {
+			var l=makeList(['a','b','c'],'x');
+			assert_equal(l.pos(0)._isList,true);
+			assert_equal(l.pos(1).elem(),'a');
+			assert_equal(l.pos(2).elem(),'b');
+			assert_equal(l.pos(3).elem(),'c');
+			assert_equal(l.pos(4)._isList,true);
+			assert_equal(l.pos(-1).elem(),'c');
+			assert_equal(l.pos(-2).elem(),'b');
+			assert_equal(l.pos(-3).elem(),'a');
+			assert_equal(l.pos(-4)._isList,true);
+		},
+		test_index_empty: function() {
+			var l=makeList([]);
+			assert_equal(l.index(0),null);
+			assert_equal(l.index(1),null);
+			assert_equal(l.index(-1),null);
+		},
+		test_index_nonEmpty: function() {
+			var l=makeList(['a','b','c'],'x');
+			assert_equal(l.index(0),'a');
+			assert_equal(l.index(1),'b');
+			assert_equal(l.index(2),'c');
+			assert_equal(l.index(3),null);
+			assert_equal(l.index(4),null);
+			assert_equal(l.index(-1),'c');
+			assert_equal(l.index(-2),'b');
+			assert_equal(l.index(-3),'a');
+			assert_equal(l.index(-4),null);
+			assert_equal(l.index(-5),null);
+		},
+		test_indexPos: function() {
+			var l=makeList([]);
+			assert_equal(l.indexPos(0)._isList,true);
+			assert_equal(l.indexPos(1)._isList,true);
+			assert_equal(l.indexPos(-1)._isList,true);
+			l=makeList(['a','b','c'],'x');
+			assert_equal(l.indexPos(0).elem(),'a');
+			assert_equal(l.indexPos(1).elem(),'b');
+			assert_equal(l.indexPos(-3).elem(),'a');
+		},
+		test_last_and_lastNode: function() {
+			var l=makeList(['a','b','c'],'x');
+			assert_equal(l.lastNode().elem(),'c');
+			assert_equal(l.last(),'c');
+		},
+		test_takeRange: function() {
+			var l=ChainList.fromArray(['a','b','c'],'x');
+			var l2=ChainList.fromArray([],'y');
+			l2.takeRange(l,l);
+			testContent(l,[]);
+			testContent(l2,['a','b','c']);
 
-		l=makeList([]);
-		assert(l.parent()==l);
-		assert_equal(l.pos(0)._isList,true);
-		assert_equal(l.pos(1)._isList,true);
-		assert_equal(l.pos(-1)._isList,true);
-		assert_equal(l.pos(0).elem(),null);
-		assert_equal(l.index(0),null);
-		assert_equal(l.index(-1),null);
-		assert_equal(l.indexNode(0)._isList,true);
-		assert_equal(l.indexNode(1)._isList,true);
-		assert_equal(l.indexNode(-1)._isList,true);
+			l=ChainList.fromArray(['a','b','c'],'x');
+			l2=ChainList.fromArray([],'y');
+			l2.takeRange(l,l.indexPos(0));
+			testContent(l,['a','b','c']);
+			testContent(l2,[]);
 
-		l=makeList(['a','b','c'],'x');
-		assert(l.parent()=='x');
-		assert_equal(l.pos(0)._isList,true);
-		assert_equal(l.pos(1).elem(),'a');
-		assert_equal(l.pos(2).elem(),'b');
-		assert_equal(l.pos(3).elem(),'c');
-		assert_equal(l.pos(4)._isList,true);
-		assert_equal(l.pos(-1).elem(),'c');
-		assert_equal(l.pos(-2).elem(),'b');
-		assert_equal(l.pos(-3).elem(),'a');
-		assert_equal(l.pos(-4)._isList,true);
-		assert_equal(l.index(0),'a');
-		assert_equal(l.index(1),'b');
-		assert_equal(l.index(2),'c');
-		assert_equal(l.index(3),null);
-		assert_equal(l.index(4),null);
-		assert_equal(l.index(-1),'c');
-		assert_equal(l.index(-2),'b');
-		assert_equal(l.index(-3),'a');
-		assert_equal(l.index(-4),null);
-		assert_equal(l.index(-5),null);
-		assert_equal(l.indexNode(0).elem(),'a');
-		assert_equal(l.indexNode(1).elem(),'b');
-		assert_equal(l.indexNode(-3).elem(),'a');
-		assert_equal(l.lastNode().elem(),'c');
-		assert_equal(l.last(),'c');
+			l=ChainList.fromArray(['a','b','c'],'x');
+			l2=ChainList.fromArray([],'y');
+			l2.takeRange(l,l.indexPos(1));
+			testContent(l,['b','c']);
+			testContent(l2,['a']);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l2=ChainList.fromArray([],'y');
-		l2.takeRange(l,l);
-		testContent(l,[]);
-		testContent(l2,['a','b','c']);
+			l=ChainList.fromArray(['a','b','c'],'x');
+			l2=ChainList.fromArray([],'y');
+			l2.takeRange(l,l.indexPos(2));
+			testContent(l,['c']);
+			testContent(l2,['a','b']);
+		},
+		test_take: function() {
+			var l=ChainList.fromArray(['a','b','c'],'x');
+			var l2=ChainList.fromArray(['d'],'y');
+			l.indexPos(1).take(l2);
+			testContent(l2,[]);
+			testContent(l,['a','d','b','c']);
+		},
+		test_takeSome: function() {
+			var l=ChainList.fromArray(['a','b','c'],'x');
+			var l2=ChainList.fromArray(['d','e'],'y');
+			l.takeSome(l2,1);
+			testContent(l2,['e']);
+			testContent(l,['a','b','c','d']);
+		},
+		test_remove: function() {
+			var l=ChainList.fromArray(['a','b','c'],'x');
+			l.indexPos(0).remove();
+			testContent(l,['b','c']);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l2=ChainList.fromArray(['d'],'y');
-		l.indexNode(1).take(l2);
-		testContent(l2,[]);
-		testContent(l,['a','d','b','c']);
+			l=ChainList.fromArray(['a','b','c'],'x');
+			l.indexPos(1).remove();
+			testContent(l,['a','c']);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l2=ChainList.fromArray([],'y');
-		l2.takeRange(l,l.indexNode(0));
-		testContent(l,['a','b','c']);
-		testContent(l2,[]);
+			l=ChainList.fromArray(['a','b','c'],'x');
+			l.indexPos(2).remove();
+			testContent(l,['a','b']);
+		},
+		test_removeAt: function() {
+			var l=ChainList.fromArray(['a','b','c'],'x');
+			l.removeAt(0);
+			testContent(l,['b','c']);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l2=ChainList.fromArray(['d','e'],'y');
-		l.takeSome(l2,1);
-		testContent(l2,['e']);
-		testContent(l,['a','b','c','d']);
+			l=ChainList.fromArray(['a','b','c'],'x');
+			l.removeAt(1);
+			testContent(l,['a','c']);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l2=ChainList.fromArray([],'y');
-		l2.takeRange(l,l.indexNode(1));
-		testContent(l,['b','c']);
-		testContent(l2,['a']);
+			l=ChainList.fromArray(['a','b','c'],'x');
+			l.removeAt(2);
+			testContent(l,['a','b']);
+		},
+		test_reverse: function() {
+			var l=ChainList.fromArray([]);
+			l.reverse();
+			testContent(l,[]);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l2=ChainList.fromArray([],'y');
-		l2.takeRange(l,l.indexNode(2));
-		testContent(l,['c']);
-		testContent(l2,['a','b']);
+			l=ChainList.fromArray(['a'],'x');
+			l.reverse();
+			testContent(l,['a']);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l.indexNode(0).remove();
-		testContent(l,['b','c']);
+			l=ChainList.fromArray(['a','b'],'x');
+			l.reverse();
+			testContent(l,['b','a']);
+		},
+		test_insert: function() {
+			var l=makeList([],'p');
+			l.insert("a");
+			testContent(l, ["a"]);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l.removeAt(0);
-		testContent(l,['b','c']);
+			l=makeList(['a'],'p');
+			l.insert("c");
+			testContent(l,["a","c"]);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l.indexNode(1).remove();
-		testContent(l,['a','c']);
+			l=makeList(['a','b'],'p');
+			l.lastNode().insert("c");
+			testContent(l, ["a","c","b"]);
+		},
+		test: function() {
+			var l=makeList(['a','b','c'],'p');
+			var l2=new ChainList();
+			l2.takeRange(l,l.indexPos(1));
+			assert_equal(l2.toArray(),["a"]);
+			testContent(l,["b","c"]);
+			l2.empty();
+			assert_equal(l2.toArray(),[]);
+			l2 = l.shiftRange(l._next);
+			assert_equal(l2.toArray(),[]);
+			testContent(l, ["b","c"]);
+			l.unshift("a");
+			testContent(l, ["a","b","c"]);
+			assert_equal(l.indexPos(1).shiftSome(1).toArray(),["b"]);
+			testContent(l, ["a","c"]);
+			var cl=l.clone();
+			assert_equal(cl.toArray(),["a","c"]);
+			cl.empty();
+			assert_equal(cl.toArray(),[]);
+			testContent(l, ["a","c"]);
+			l.insertArray(["d","e"]);
+			testContent(l, ["a","c","d","e"]);
+			assert_equal(l.indexPos(1).shiftSome(2).toArray(),["c","d"]);
+			testContent(l, ["a","e"]);
+			l.insert("z");
+			l.reverse();
+			testContent(l, ["z","e","a"]);
+			l.reverse();
+			testContent(l, ["a","e","z"]);
+			assert_equal(l.indexPos(1).index(1),"z");
+			assert_equal(l.indexPos(1).index(-1),"a");
+			assert_equal(l.indexPos(1).index(2),null);
+			assert_equal(l.indexPos(1).index(-2),null);
+			assert_equal(l.cloneSome(2).toArray(),["a","e"]);
+			assert_equal(l.slice(1,3).toArray(),["e","z"]);
+			assert_equal(l.slice(0,2).toArray(),["a","e"]);
+			testContent(l, ["a","e","z"]);
+			assert_equal(l.splice(1,1,"f","g").toArray(),["e"]);
+			testContent(l, ["a","f","g","z"]);
+			assert_equal(l._length,4);
+			assert_equal(l.parent(),"p");
+			assert_equal(l.indexPos(1).parent(),"p");
+			assert_equal(l.indexPos(-1).parent(),"p");
+			assert_equal(l.indexPos(-3).parent(),"p");
+			assert_equal(l.indexOfNode(l.indexPos(0)),0);
+			assert_equal(l.indexOfNode(l.indexPos(1)),1);
+			assert_equal(l.indexOfNode(l.indexPos(2)),2);
+			l.insertAt(0,"x");
+			testContent(l, ["x","a","f","g","z"]);
+			l.insertAt(-1,"y");
+			testContent(l, ["x","a","f","g","z","y"]);
+			l.insertAt(l._length,"q");
+			testContent(l, ["x","a","f","g","z","y","q"]);
+		},
+		test_chainListSorted: function() {
+			var ls = new ChainListSorted();
+			testContent(ls, []);
+			ls.insert(2);
+			testContent(ls, [2]);
+			ls.insert(1);
+			testContent(ls, [1,2]);
+			ls.insert(5);
+			testContent(ls, [1,2,5]);
+			ls.insert(5);
+			testContent(ls, [1,2,5,5]);
+			ls.insert(3);
+			testContent(ls, [1,2,3,5,5]);
 
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l.removeAt(1);
-		testContent(l,['a','c']);
-
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l.indexNode(2).remove();
-		testContent(l,['a','b']);
-
-		l=ChainList.fromArray(['a','b','c'],'x');
-		l.removeAt(2);
-		testContent(l,['a','b']);
-
-		l=ChainList.fromArray([]);
-		l.reverse();
-		testContent(l,[]);
-
-		l=ChainList.fromArray(['a'],'x');
-		l.reverse();
-		testContent(l,['a']);
-
-		l=ChainList.fromArray(['a','b'],'x');
-		l.reverse();
-		testContent(l,['b','a']);
-
-		l=makeList([],'p');
-		l.insert("a");
-		testContent(l, ["a"]);
-		l.insert("c");
-		testContent(l,["a","c"]);
-		l.lastNode().insert("b");
-		testContent(l, ["a","b","c"]);
-		assert_equal(l.index(1),"b");
-		var l2=new ChainList();
-		l2.takeRange(l,l.indexNode(1));
-		assert_equal(l2.toArray(),["a"]);
-		testContent(l,["b","c"]);
-		l2.empty();
-		assert_equal(l2.toArray(),[]);
-		l2 = l.shiftRange(l._next);
-		assert_equal(l2.toArray(),[]);
-		testContent(l, ["b","c"]);
-		l.unshift("a");
-		testContent(l, ["a","b","c"]);
-		assert_equal(l.indexNode(1).shiftSome(1).toArray(),["b"]);
-		testContent(l, ["a","c"]);
-		var cl=l.clone();
-		assert_equal(cl.toArray(),["a","c"]);
-		cl.empty();
-		assert_equal(cl.toArray(),[]);
-		testContent(l, ["a","c"]);
-		l.insertArray(["d","e"]);
-		testContent(l, ["a","c","d","e"]);
-		assert_equal(l.indexNode(1).shiftSome(2).toArray(),["c","d"]);
-		testContent(l, ["a","e"]);
-		l.insert("z");
-		l.reverse();
-		testContent(l, ["z","e","a"]);
-		l.reverse();
-		testContent(l, ["a","e","z"]);
-		assert_equal(l.indexNode(1).index(1),"z");
-		assert_equal(l.indexNode(1).index(-1),"a");
-		assert_equal(l.indexNode(1).index(2),null);
-		assert_equal(l.indexNode(1).index(-2),null);
-		assert_equal(l.cloneSome(2).toArray(),["a","e"]);
-		assert_equal(l.slice(1,3).toArray(),["e","z"]);
-		assert_equal(l.slice(0,2).toArray(),["a","e"]);
-		testContent(l, ["a","e","z"]);
-		assert_equal(l.splice(1,1,"f","g").toArray(),["e"]);
-		testContent(l, ["a","f","g","z"]);
-		assert_equal(l._length,4);
-		assert_equal(l.parent(),"p");
-		assert_equal(l.indexNode(1).parent(),"p");
-		assert_equal(l.indexNode(-1).parent(),"p");
-		assert_equal(l.indexNode(-3).parent(),"p");
-		assert_equal(l.indexOfNode(l.indexNode(0)),0);
-		assert_equal(l.indexOfNode(l.indexNode(1)),1);
-		assert_equal(l.indexOfNode(l.indexNode(2)),2);
-		l.insertAt(0,"x");
-		testContent(l, ["x","a","f","g","z"]);
-		l.insertAt(-1,"y");
-		testContent(l, ["x","a","f","g","z","y"]);
-		l.insertAt(l._length,"q");
-		testContent(l, ["x","a","f","g","z","y","q"]);
-
-		var ls = new ChainListSorted();
-		testContent(ls, []);
-		ls.insert(2);
-		testContent(ls, [2]);
-		ls.insert(1);
-		testContent(ls, [1,2]);
-		ls.insert(5);
-		testContent(ls, [1,2,5]);
-		ls.insert(5);
-		testContent(ls, [1,2,5,5]);
-		ls.insert(3);
-		testContent(ls, [1,2,3,5,5]);
-
-		var ls = new ChainListSorted(null,function(a,b) { return b-a; } );
-		testContent(ls, []);
-		ls.insert(2);
-		testContent(ls, [2]);
-		ls.insert(1);
-		testContent(ls, [2,1]);
-		ls.insert(5);
-		testContent(ls, [5,2,1]);
-		ls.insert(5);
-		testContent(ls, [5,5,2,1]);
-		ls.insert(3);
-		testContent(ls, [5,5,3,2,1]);
-		var ls = new ChainListSorted.fromArray([7,4,8,3,2]);
-		testContent(ls,[2,3,4,7,8]);
+			var ls = new ChainListSorted(null,function(a,b) { return b-a; } );
+			testContent(ls, []);
+			ls.insert(2);
+			testContent(ls, [2]);
+			ls.insert(1);
+			testContent(ls, [2,1]);
+			ls.insert(5);
+			testContent(ls, [5,2,1]);
+			ls.insert(5);
+			testContent(ls, [5,5,2,1]);
+			ls.insert(3);
+			testContent(ls, [5,5,3,2,1]);
+			var ls = new ChainListSorted.fromArray([7,4,8,3,2]);
+			testContent(ls,[2,3,4,7,8]);
+		}
+	};
+	for(var key in tests) {
+		if (tests.hasOwnProperty(key)) {
+			console.log('Executing: '+key);
+			tests[key]();
+		}
 	}
-	test();
-})();
+};

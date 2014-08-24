@@ -60,23 +60,27 @@ ChainList.Node.prototype={
 	setParent: function(val) {
 		_list._parent = val;
 	},
-	_startNode: function() { return this; },
 	elem: function() { return this._elem; },
+	node: function() { return this; },
 	setElem: function(val) { this._elem = val; },
+	firstNode: function() { return this; },
 	lastNode: function() {
 		return this._list._prev;
+	},
+	first: function() {
+		return this.firstNode()._elem;
 	},
 	last: function() {
 		return this.lastNode()._elem;
 	},		
 	takeRange: function(start,end) {
-		start=start._startNode();
+		start=start.firstNode();
 		if (start==end)
 			return this;
 		var last=end._prev;
 
 		var myList=this._list;
-		start.forEachRange(end, function(elem,index,node) {
+		start.forEachTill(end, function(elem,index,node) {
 			node._list._length--;
 			node._list=myList;
 			node._list._length++;
@@ -97,16 +101,16 @@ ChainList.Node.prototype={
 		return this.takeRange(list,list._list);
 	},
 	takeSome: function(list,count) {
-		return this.takeRange(list,list.indexNode(count));
+		return this.takeRange(list,list.indexPos(count));
 	},
 	cloneRange: function(end) {
 		var ll=this.list()._initClone();
-		for(var n=this._startNode(); n!=end;n=n._next)
+		for(var n=this.firstNode(); n!=end;n=n._next)
 			ll.insert(n._elem);
 		return ll;
 	},
 	cloneSome: function(count) {
-		return this.cloneRange(this.indexNode(count));
+		return this.cloneRange(this.indexPos(count));
 	},
 	shiftRange: function(end) {
 		var ll=this.list()._initClone();
@@ -114,17 +118,17 @@ ChainList.Node.prototype={
 		return ll;
 	},
 	shiftSome: function(count) {
-		return this.shiftRange(this.indexNode(count));
+		return this.shiftRange(this.indexPos(count));
 	},
 	truncate: function() {
 		return this.shiftRange(this._list);
 	},
 	shift: function() { return this.shiftSome(1).index(0); },
 	slice: function(begin,end) {
-		return this.indexNode(begin).cloneRange(end!=null?this.indexNode(end):this._list);
+		return this.indexPos(begin).cloneRange(end!=null?this.indexPos(end):this._list);
 	},
 	splice: function(index,cutCount,elemToInsert1) {
-		var n=this.indexNode(index);
+		var n=this.indexPos(index);
 		var nn=n._next;
 		var r=n.shiftSome(cutCount);
 		nn.insertArray( Array.prototype.slice.call(arguments,2));
@@ -147,12 +151,15 @@ ChainList.Node.prototype={
 		}
 	},
 	unshift: function() {
-		this._startNode().insertArray(arguments);
+		this.firstNode().insertArray(arguments);
 		return this._list._count;
 	},
 	push: function(elem) {
 		this._list.insertArray(arguments);
 		return this._list._count;
+	},
+	selfIndex: function() {
+		return this._list.indexOfNode(this);
 	},
 	indexOfNode: function(node) {
 		var r = this.forEach(function(i,index,n) {
@@ -175,19 +182,6 @@ ChainList.Node.prototype={
 		});
 		return -1;
 	},
-	indexNode: function(index) { //assumes this is a list, thus index(0) gets the first element by taking the next of the list
-		var s;
-		if (index<0) {
-			s=this._prev;
-			while(++index<0 && !s._isList) 
-				s=s._prev;
-		} else {
-			s=this._startNode();
-			while(--index>=0 && !s._isList) 
-				s=s._next;
-		}
-		return s;
-	},
 	pos: function(index) {
 		var s = this;
 		if (index<0) {
@@ -196,12 +190,30 @@ ChainList.Node.prototype={
 			while(--index>=0) s=s._next;
 		return s;
 	},
+	indexPos: function(index) {
+		var s;
+		if (index<0) {
+			s=this._prev;
+			while(++index<0 && !s._isList) 
+				s=s._prev;
+		} else {
+			s=this.firstNode();
+			while(--index>=0 && !s._isList) 
+				s=s._next;
+		}
+		return s;
+	},
+	nextPos: function() { return this._next; },
+	prevPos: function() { return this._prev; },
 	index: function(index) {
-		var n=this.indexNode(index);
+		var n=this.indexPos(index);
 		return n._isList ? null : n._elem;
 	},
-	next: function() { return this._next; },
-	prev: function() { return this._prev; },
+	next: function() { return this._next.elem(); },
+	prev: function() { return this._prev.elem(); },
+	indexNode: function(index) { return this.indexPos(index).node(); },
+	nextNode: function() { return this._next.node(); },
+	prevNode: function() { return this._prev.node(); },
 	countRange: function(end) { // counts the nunmber of successors
 		var i = 0;
 		for(var s=this._next;s!=end;s=s._next) 
@@ -216,9 +228,9 @@ ChainList.Node.prototype={
 		this.take(r);
 		return this;
 	},
-	forEachRange: function (end, func/*(elem,index,Node): retVal*/) {
+	forEachTill: function (end, func/*(elem,index,Node): retVal*/) {
 		var index=0;
-		for(var s=this._startNode();s!=end;s=s._next) {
+		for(var s=this.firstNode();s!=end;s=s._next) {
 			var value=func.call(this,s._elem,index,s);
 			if (value!==undefined)
 				return value;
@@ -226,7 +238,7 @@ ChainList.Node.prototype={
 		}
 	},
 	forEach: function (func/*(elem,index,Node): retVal*/) {
-		return this.forEachRange(this.list(), func);
+		return this.forEachTill(this.list(), func);
 	},
 	forEachBackRange: function (end, func/*(elem,index,Node): retVal*/) {
 		var index=0; //this is faster than starting with calculating count
@@ -263,10 +275,11 @@ ChainList.prototype.truncate = function() {}
 ChainList.prototype.remove = null;
 ChainList.prototype.count = function() { return this._length; }
 ChainList.prototype.clone = function() { return this.cloneRange(this);};
-ChainList.prototype._startNode = function() { return this._next; };
-ChainList.prototype.elem = function() { return null };
+ChainList.prototype.node = function() { return null; };
+ChainList.prototype.firstNode = function() { return this._next; };
+ChainList.prototype.elem = function() { return null; };
 ChainList.prototype.insertAt = function(index,elem) { return this.pos(index+1).insert(elem); } // 0 = begin, length or -1=end
-ChainList.prototype.removeAt = function(index) { return this.indexNode(index).remove(); } // 0 = first, -1=last
+ChainList.prototype.removeAt = function(index) { return this.indexPos(index).remove(); } // 0 = first, -1=last
 ChainList.prototype._testInvariants = function() {
 	var count=0;
 	this.forEach(function(elem,index,node) {
