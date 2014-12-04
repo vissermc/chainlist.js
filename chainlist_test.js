@@ -43,44 +43,44 @@ function chainlist_test() {
 			l=makeList(['a','b','c'],'x');
 			assert(l.parent()=='x');
 		},
-		test_pos_empty: function() {
+		test_indexLink_empty: function() {
 			var l=makeList([]);
 			assert(l.parent()==l);
-			assert_equal(l.pos(0)._isList,true);
-			assert_equal(l.pos(1)._isList,true);
-			assert_equal(l.pos(-1)._isList,true);
-			assert_equal(l.pos(0).elem(),null);
+			assert_equal(l.indexLink(0)._isList,true);
+			assert_equal(l.indexLink(1)._isList,true);
+			assert_equal(l.indexLink(-1)._isList,true);
+			assert_equal(l.indexLink(0).elem(),null);
 		},
-		test_pos_nonEmpty: function() {
+		test_indexLink_nonEmpty: function() {
 			var l=makeList(['a','b','c'],'x');
-			assert_equal(l.pos(0)._isList,true);
-			assert_equal(l.pos(1).elem(),'a');
-			assert_equal(l.pos(2).elem(),'b');
-			assert_equal(l.pos(3).elem(),'c');
-			assert_equal(l.pos(4)._isList,true);
-			assert_equal(l.pos(-1).elem(),'c');
-			assert_equal(l.pos(-2).elem(),'b');
-			assert_equal(l.pos(-3).elem(),'a');
-			assert_equal(l.pos(-4)._isList,true);
+			assert_equal(l.indexLink(0)._isList,true);
+			assert_equal(l.indexLink(1).elem(),'a');
+			assert_equal(l.indexLink(2).elem(),'b');
+			assert_equal(l.indexLink(3).elem(),'c');
+			assert_equal(l.indexLink(4)._isList,true);
+			assert_equal(l.indexLink(-1).elem(),'c');
+			assert_equal(l.indexLink(-2).elem(),'b');
+			assert_equal(l.indexLink(-3).elem(),'a');
+			assert_equal(l.indexLink(-4)._isList,true);
 		},
-		test_index_empty: function() {
+		test_get_empty: function() {
 			var l=makeList([]);
-			assert_equal(l.index(0),null);
-			assert_equal(l.index(1),null);
-			assert_equal(l.index(-1),null);
+			assert_equal(l.get(0),null);
+			assert_equal(l.get(1),null);
+			assert_equal(l.get(-1),null);
 		},
-		test_index_nonEmpty: function() {
+		test_get_nonEmpty: function() {
 			var l=makeList(['a','b','c'],'x');
-			assert_equal(l.index(0),'a');
-			assert_equal(l.index(1),'b');
-			assert_equal(l.index(2),'c');
-			assert_equal(l.index(3),null);
-			assert_equal(l.index(4),null);
-			assert_equal(l.index(-1),'c');
-			assert_equal(l.index(-2),'b');
-			assert_equal(l.index(-3),'a');
-			assert_equal(l.index(-4),null);
-			assert_equal(l.index(-5),null);
+			assert_equal(l.get(0),'a');
+			assert_equal(l.get(1),'b');
+			assert_equal(l.get(2),'c');
+			assert_equal(l.get(3),null);
+			assert_equal(l.get(4),null);
+			assert_equal(l.get(-1),'c');
+			assert_equal(l.get(-2),'b');
+			assert_equal(l.get(-3),'a');
+			assert_equal(l.get(-4),null);
+			assert_equal(l.get(-5),null);
 		},
 		test_indexPos: function() {
 			var l=makeList([]);
@@ -92,10 +92,9 @@ function chainlist_test() {
 			assert_equal(l.indexPos(1).elem(),'b');
 			assert_equal(l.indexPos(-3).elem(),'a');
 		},
-		test_last_and_lastNode: function() {
+		test_last: function() {
 			var l=makeList(['a','b','c'],'x');
-			assert_equal(l.lastNode().elem(),'c');
-			assert_equal(l.last(),'c');
+			assert_equal(l.last().elem(),'c');
 		},
 		test_takeRange: function() {
 			var l=ChainList.fromArray(['a','b','c'],'x');
@@ -185,7 +184,7 @@ function chainlist_test() {
 			testContent(l,["a","c"]);
 
 			l=makeList(['a','b'],'p');
-			l.lastNode().insert("c");
+			l.last().insert("c");
 			testContent(l, ["a","c","b"]);
 		},
 		test: function() {
@@ -217,10 +216,10 @@ function chainlist_test() {
 			testContent(l, ["z","e","a"]);
 			l.reverse();
 			testContent(l, ["a","e","z"]);
-			assert_equal(l.indexPos(1).index(1),"z");
-			assert_equal(l.indexPos(1).index(-1),"a");
-			assert_equal(l.indexPos(1).index(2),null);
-			assert_equal(l.indexPos(1).index(-2),null);
+			assert_equal(l.indexPos(1).get(1),"z");
+			assert_equal(l.indexPos(1).get(-1),"a");
+			assert_equal(l.indexPos(1).get(2),null);
+			assert_equal(l.indexPos(1).get(-2),null);
 			assert_equal(l.cloneSome(2).toArray(),["a","e"]);
 			assert_equal(l.slice(1,3).toArray(),["e","z"]);
 			assert_equal(l.slice(0,2).toArray(),["a","e"]);
@@ -232,9 +231,9 @@ function chainlist_test() {
 			assert_equal(l.indexPos(1).parent(),"p");
 			assert_equal(l.indexPos(-1).parent(),"p");
 			assert_equal(l.indexPos(-3).parent(),"p");
-			assert_equal(l.indexOfNode(l.indexPos(0)),0);
-			assert_equal(l.indexOfNode(l.indexPos(1)),1);
-			assert_equal(l.indexOfNode(l.indexPos(2)),2);
+			assert_equal(l.indexOf(l.indexPos(0)),0);
+			assert_equal(l.indexOf(l.indexPos(1)),1);
+			assert_equal(l.indexOf(l.indexPos(2)),2);
 			l.insertAt(0,"x");
 			testContent(l, ["x","a","f","g","z"]);
 			l.insertAt(-1,"y");

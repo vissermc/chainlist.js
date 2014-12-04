@@ -5,10 +5,10 @@ Use this container type when the elements needs quick access to its siblings and
 
 It is implemented as a doubly linked list, therefore navigating n elements away takes O(n) time. Additionally, there is fast (O(1)) access to the parent list, the last element, and the element count.
 
-Concrete elements can either inherit from ChainList.Node or aggregate it (by passing itself as parameter, and adding the generated node as a property.
+Concrete elements can either inherit from ChainList.Node or aggregate it by passing itself as parameter, and adding the generated node as a field.
 Similarly, a concrete container can either inherit from ChainList or aggregate it.
 
-ChainList inherits from ChainList.Node as well, being a node in the list itself. Some functions, such as 'pos', 'next', and 'prev' can reach this container node.
+ChainList inherits from ChainList.Node as well, being a link in the list itself. Some functions, such as 'indexLink', 'nextLink', and 'prevLink' can reach this container node.
 
 A lot of functions are both available from a node and a container.
 
@@ -18,17 +18,18 @@ Example
 -------
 <pre>
 var list = ChainList.fromArray([6,3,7,8])
-var thirdNode = list.indexNode(2)  
-thirdNode.item()==7  
-thirdNode.next().item()==8  
+list.get(2) == 7
+var thirdNode = list.index(2)  
+thirdNode.elem()== 7  
+thirdNode.next().elem()==8  
 thirdNode.list() == list  
 </pre>
 <pre>
 var list2 = new ChainList();  
-var elemX = {}  
+var elemX = {};
 elemX.node = list2.insertAt(0,elemX); // also store a reference to the node from within the elem object.  
 ...  
-elemX.node.next().item() // travel from the item to an adjacent item
+elemX.node.next().elem() // travel from the item to an adjacent item
 </pre>
 
 List-only functions
@@ -60,7 +61,6 @@ Common functions
 -------------------
 * <code>parent ()</code>
 * <code>setParent ( val )</code>
-* <code>lastNode ()</code>
 * <code>last ()</code>
 * <code>takeRange ( start,end )</code>
 * <code>take ( list )</code>
@@ -81,22 +81,26 @@ Common functions
 * <code>push ( elem1, ..., elemN )</code>  
 	inserts elem at the end of the list
 	return new length property.
-* <code>indexOfNode ( node )</code>
-* <code>indexOf ( elem )</code>
-* <code>lastIndexOf ( elem )</code>
-* <code>indexNode ( n )</code>  
-	In case node is a list, it returns the n'th node, or if n is negative, returns (count - n)'th node.
-	Else, it returns n'th successor or -n'th predecessor. This list itself is never returned, not does it wrap around.
+* <code>indexOf ( node )</code>
+* <code>indexOfElem ( elem )</code>
+* <code>lastIndexOfElem ( elem )</code>
 * <code>index ( n )</code>  
-	In case node is a list, it returns the n'th elem, or if n is negative, returns (count - n)'th elem.
+	In case link is a list, it returns the n'th node, or if n is negative, returns (count - n)'th node.
+	Else, it returns n'th successor or -n'th predecessor. This list itself is never returned, not does it wrap around.
+* <code>get ( n )</code>  
+	In case link is a list, it returns the n'th elem, or if n is negative, returns (count - n)'th elem.
 	Else, it returns n'th successor or -n'th predecessor. 
 	It will not wrap around.
-* <code>pos ( n )</code>  
-	returns n'th successor or -n'th predecessor node. This list itself is also node that might be returned. This function wraps around.
+* <code>indexLink ( n )</code>  
+	returns n'th successor or -n'th predecessor node. This list itself is also link that might be returned. This function wraps around.
+* <code>nextLink ()</code>  
+	returns the next link, i.e. either a node or the container.
+* <code>prevLink ()</code>  
+	returns the previous link, i.e. either a node or the container.
 * <code>next ()</code>  
-	returns the next node, or the list if there is no next.
+	returns the next node, or null if it was the last.
 * <code>prev ()</code>  
-	returns the previous node, or the list if there is no previous.
+	returns the previous link, or null if it was the first.
 * <code>countRange ( end )</code>
 * <code>isList ()</code>
 * <code>reverse ()</code>

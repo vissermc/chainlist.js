@@ -38,7 +38,7 @@ function ChainList(parent,compareFunc) {
 	this._compareFunc = compareFunc
 }
 
-ChainList.Node = function(prev, elem/*optional*/) { // A class captured in the ChainList namespace, which is also the base class of a Linked List
+ChainList.Link = function(prev, elem/*optional*/) { // A class captured in the ChainList namespace, which is also the base class of a Linked List
 	var t=prev._next;
 	prev._next=this;
 	this._prev=prev;
@@ -49,8 +49,8 @@ ChainList.Node = function(prev, elem/*optional*/) { // A class captured in the C
 	this._list._length++;
 }
 
-ChainList.Node.prototype={
-	constructor: ChainList.Node,
+ChainList.Link.prototype={
+	constructor: ChainList.Link,
 	list: function() {
 		return this._list;
 	},
@@ -63,18 +63,12 @@ ChainList.Node.prototype={
 	elem: function() { return this._elem; },
 	node: function() { return this; },
 	setElem: function(val) { this._elem = val; },
-	firstNode: function() { return this; },
-	lastNode: function() {
+	first: function() { return this; },
+	last: function() {
 		return this._list._prev;
 	},
-	first: function() {
-		return this.firstNode()._elem;
-	},
-	last: function() {
-		return this.lastNode()._elem;
-	},		
 	takeRange: function(start,end) {
-		start=start.firstNode();
+		start=start.first();
 		if (start==end)
 			return this;
 		var last=end._prev;
@@ -105,7 +99,7 @@ ChainList.Node.prototype={
 	},
 	cloneRange: function(end) {
 		var ll=this.list()._initClone();
-		for(var n=this.firstNode(); n!=end;n=n._next)
+		for(var n=this.first(); n!=end;n=n._next)
 			ll.insert(n._elem);
 		return ll;
 	},
@@ -138,11 +132,11 @@ ChainList.Node.prototype={
 		return this.shiftSome(1).index(0);
 	},
 	pop: function() {
-		return this.lastNode().remove();
+		return this.last().remove();
 	},
 	insert: function(elem) {
 		//console.log("Insert: "+(new Error).stack.split("\n").slice(2).join("\n"));
-		return new ChainList.Node(this._prev,elem);
+		return new ChainList.Link(this._prev,elem);
 	},
 	insertArray: function(elems) {
 		var n=this;
@@ -151,7 +145,7 @@ ChainList.Node.prototype={
 		}
 	},
 	unshift: function() {
-		this.firstNode().insertArray(arguments);
+		this.first().insertArray(arguments);
 		return this._list._count;
 	},
 	push: function(elem) {
@@ -159,30 +153,30 @@ ChainList.Node.prototype={
 		return this._list._count;
 	},
 	selfIndex: function() {
-		return this._list.indexOfNode(this);
+		return this._list.indexOf(this);
 	},
-	indexOfNode: function(node) {
+	indexOf: function(node) {
 		var r = this.forEach(function(i,index,n) {
 			if (n==node)
 				return index;
 		});
 		return r==null? -1 : r;
 	},
-	indexOf: function(elem) {
+	indexOfElem: function(elem) {
 		var r= this.forEach(function(i,index,n) {
 			if (i==elem)
 				return index;
 		});
 		return r==null? -1 : r;
 	},
-	lastIndexOf: function(elem) {
+	lastIndexOfElem: function(elem) {
 		this.forEachBack(function(i,index,n) {
 			if (i==elem)
 				return index;
 		});
 		return -1;
 	},
-	pos: function(index) {
+	indexLink: function(index) {
 		var s = this;
 		if (index<0) {
 			while(++index<=0) s=s._prev;
@@ -197,23 +191,18 @@ ChainList.Node.prototype={
 			while(++index<0 && !s._isList) 
 				s=s._prev;
 		} else {
-			s=this.firstNode();
+			s=this.first();
 			while(--index>=0 && !s._isList) 
 				s=s._next;
 		}
 		return s;
 	},
-	nextPos: function() { return this._next; },
-	prevPos: function() { return this._prev; },
-	index: function(index) {
-		var n=this.indexPos(index);
-		return n._isList ? null : n._elem;
-	},
-	next: function() { return this._next.elem(); },
-	prev: function() { return this._prev.elem(); },
-	indexNode: function(index) { return this.indexPos(index).node(); },
-	nextNode: function() { return this._next.node(); },
-	prevNode: function() { return this._prev.node(); },
+	nextLink: function() { return this._next; },
+	prevLink: function() { return this._prev; },
+	index: function(index) { return this.indexPos(index).node(); },
+	next: function() { return this._next.node(); },
+	prev: function() { return this._prev.node(); },
+	get: function(index) { return this.indexPos(index).elem(); },
 	countRange: function(end) { // counts the nunmber of successors
 		var i = 0;
 		for(var s=this._next;s!=end;s=s._next) 
@@ -230,7 +219,7 @@ ChainList.Node.prototype={
 	},
 	forEachTill: function (end, func/*(elem,index,Node): retVal*/) {
 		var index=0;
-		for(var s=this.firstNode();s!=end;s=s._next) {
+		for(var s=this.first();s!=end;s=s._next) {
 			var value=func.call(this,s._elem,index,s);
 			if (value!==undefined)
 				return value;
@@ -266,19 +255,19 @@ ChainList.Node.prototype={
 	}
 };
 
-ChainList.prototype = Object.create (ChainList.Node.prototype);
+ChainList.prototype = Object.create (ChainList.Link.prototype);
 ChainList.prototype.constructor = ChainList;
 ChainList.prototype._isList = true;
 ChainList.prototype.list = function() { return this; };
-ChainList.prototype.empty = ChainList.Node.prototype.truncate;
+ChainList.prototype.empty = ChainList.Link.prototype.truncate;
 ChainList.prototype.truncate = function() {}
 ChainList.prototype.remove = null;
 ChainList.prototype.count = function() { return this._length; }
 ChainList.prototype.clone = function() { return this.cloneRange(this);};
 ChainList.prototype.node = function() { return null; };
-ChainList.prototype.firstNode = function() { return this._next; };
+ChainList.prototype.first = function() { return this._next; };
 ChainList.prototype.elem = function() { return null; };
-ChainList.prototype.insertAt = function(index,elem) { return this.pos(index+1).insert(elem); } // 0 = begin, length or -1=end
+ChainList.prototype.insertAt = function(index,elem) { return this.indexLink(index+1).insert(elem); } // 0 = begin, length or -1=end
 ChainList.prototype.removeAt = function(index) { return this.indexPos(index).remove(); } // 0 = first, -1=last
 ChainList.prototype._testInvariants = function() {
 	var count=0;
@@ -291,7 +280,9 @@ ChainList.prototype._testInvariants = function() {
 	});
 	assert_equal(count,this.count());
 };
+
 ChainList.prototype._initClone = function() { return new ChainList(); }
+
 ChainList.fromArray = function(array,parent) {
 	var ll = new ChainList(parent);
 	ll.insertArray(array);
@@ -302,11 +293,14 @@ function ChainListSorted(parent,compareFunc) {
 	ChainList.call(this,parent);
 	this._compareFunc = compareFunc || (parent && parent.compareFunc) || ChainListSorted.defaultCompareFunc;
 }
+
 ChainListSorted.defaultCompareFunc = function(a,b) {
 	return a-b;
 }
+
 ChainListSorted.prototype = Object.create (ChainList.prototype);
 ChainListSorted.prototype.constructor = ChainListSorted;
+
 ChainListSorted.prototype.insert = function(elem) {
 	var node = this.forEach(function(e,index,node) {
 		if (this._compareFunc(elem,e)<=0)
@@ -315,9 +309,13 @@ ChainListSorted.prototype.insert = function(elem) {
 	return new ChainListSorted.Node(node._prev,elem);
 };
 ChainListSorted.prototype.insertAt = null; //disable
+
 ChainListSorted.prototype.unshift = null; //disable
+
 ChainListSorted.prototype.push = null; //disable
+
 ChainListSorted.prototype._initClone = function() { return new ChainListSorted(null,this._compareFunc); }
+
 ChainListSorted.fromArray = function(array,parent,compareFunc) {
 	var ll = new ChainListSorted(parent,compareFunc);
 	ll.insertArray(array);
@@ -325,10 +323,13 @@ ChainListSorted.fromArray = function(array,parent,compareFunc) {
 }
 
 ChainListSorted.Node = function(prev, elem) {
-	ChainList.Node.call(this,prev,elem);
+	ChainList.Link.call(this,prev,elem);
 };
-ChainListSorted.Node.prototype = Object.create (ChainList.Node.prototype);
+
+ChainListSorted.Node.prototype = Object.create (ChainList.Link.prototype);
+
 ChainListSorted.Node.prototype.constructor = ChainListSorted.Node;
+
 ChainListSorted.Node.prototype.insert = function(elem) {
 	return this.list().insert(elem);
 }
