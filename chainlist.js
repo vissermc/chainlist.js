@@ -67,6 +67,16 @@ ChainList.Link.prototype={
 	last: function() {
 		return this._list._prev;
 	},
+	index: function(index) { return this.indexPos(index).node(); },
+	indexOf: function(node) {
+		var r = this.forEach(function(i,index,n) {
+			if (n==node)
+				return index;
+		});
+		return r==null? -1 : r;
+	},
+	next: function() { return this._next.node(); },
+	prev: function() { return this._prev.node(); },
 	takeRange: function(start,end) {
 		start=start.first();
 		if (start==end)
@@ -135,7 +145,6 @@ ChainList.Link.prototype={
 		return this.last().remove();
 	},
 	insert: function(elem) {
-		//console.log("Insert: "+(new Error).stack.split("\n").slice(2).join("\n"));
 		return new ChainList.Link(this._prev,elem);
 	},
 	insertArray: function(elems) {
@@ -155,13 +164,6 @@ ChainList.Link.prototype={
 	selfIndex: function() {
 		return this._list.indexOf(this);
 	},
-	indexOf: function(node) {
-		var r = this.forEach(function(i,index,n) {
-			if (n==node)
-				return index;
-		});
-		return r==null? -1 : r;
-	},
 	indexOfElem: function(elem) {
 		var r= this.forEach(function(i,index,n) {
 			if (i==elem)
@@ -169,6 +171,7 @@ ChainList.Link.prototype={
 		});
 		return r==null? -1 : r;
 	},
+	indexElem: function(index) { return this.indexPos(index).elem(); },
 	lastIndexOfElem: function(elem) {
 		this.forEachBack(function(i,index,n) {
 			if (i==elem)
@@ -199,10 +202,6 @@ ChainList.Link.prototype={
 	},
 	nextLink: function() { return this._next; },
 	prevLink: function() { return this._prev; },
-	index: function(index) { return this.indexPos(index).node(); },
-	next: function() { return this._next.node(); },
-	prev: function() { return this._prev.node(); },
-	get: function(index) { return this.indexPos(index).elem(); },
 	countRange: function(end) { // counts the nunmber of successors
 		var i = 0;
 		for(var s=this._next;s!=end;s=s._next) 
@@ -251,9 +250,11 @@ ChainList.Link.prototype={
 		return res;
 	},
 	toArray: function() {
-		return this.map(function(i) { return i; });
+		return this.map(function(elem) { return elem; });
 	}
 };
+
+ChainList.Link.prototype.get = ChainList.Link.prototype.indexElem;
 
 ChainList.prototype = Object.create (ChainList.Link.prototype);
 ChainList.prototype.constructor = ChainList;
