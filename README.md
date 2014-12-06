@@ -9,7 +9,6 @@ Both the list (ChainList) and its nodes (ChainList.Node) inherit from ChainList.
 Concrete elements can either inherit from ChainList.Node or aggregate it by passing itself as parameter (see dashed 'elem' in diagram).
 Similarly, a concrete container can either inherit from ChainList or aggregate it (see dashed 'parent' in diagram).
 Some functions, such as 'indexLink', 'nextLink', and 'prevLink', traverse over all links.
-A lot of functions are both available from a node and a container.
 
 ![UML](uml.png)
 
