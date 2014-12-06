@@ -50,6 +50,10 @@ ChainList.Link = function(prev) { // A class captured in the ChainList namespace
 
 ChainList.Link.prototype={
 	constructor: ChainList.Link,
+	
+	parent: function() {
+		return this._list._parent;
+	},
 
 	//----- list functions -----
 
@@ -91,8 +95,9 @@ ChainList.Link.prototype={
 	takeSome: function(list,count) {
 		return this.takeRange(list,list.indexPos(count));
 	},
+	clone: function() { return this.cloneRange(this._list);},
 	cloneRange: function(end) {
-		var ll=this.list()._initClone();
+		var ll=this._list._initClone();
 		for(var n=this.firstPos(); n!=end;n=n._next)
 			ll.insert(n._elem);
 		return ll;
@@ -101,7 +106,7 @@ ChainList.Link.prototype={
 		return this.cloneRange(this.indexPos(count));
 	},
 	shiftRange: function(end) {
-		var ll=this.list()._initClone();
+		var ll=this._list._initClone();
 		ll.takeRange(this,end);
 		return ll;
 	},
@@ -235,7 +240,7 @@ ChainList.Link.prototype={
 		}
 	},
 	forEach: function (func/*(elem,index,Node): retVal*/) {
-		return this.forEachTill(this.list(), func);
+		return this.forEachTill(this._list, func);
 	},
 	forEachBackRange: function (end, func/*(elem,index,Node): retVal*/) {
 		var index=0; //this is faster than starting with calculating count
@@ -247,7 +252,7 @@ ChainList.Link.prototype={
 		}
 	},
 	forEachBack: function (func/*(elem,index,Node): retVal*/) {
-		return this.forEachBackRange(this.list(), func);
+		return this.forEachBackRange(this._list, func);
 	},
 	map: function (func/*(elem,index,Node): retVal*/) {
 		var index=0;
@@ -297,16 +302,12 @@ ChainList.prototype.extend({
 	constructor: ChainList,
 	_isList: true,
 	list: function() { return this; },
-	parent: function() {
-		return this._parent;
-	},
 	setParent: function(val) {
 		this._parent = val;
 	},
 	clear: ChainList.Link.prototype.truncate,
 	truncate: function() {},
 	count: function() { return this._length; },
-	clone: function() { return this.cloneRange(this);},
 	node: function() { return null; },
 	firstPos: function() { return this._next; },
 	elem: function() { return null; },
@@ -371,6 +372,6 @@ ChainListSorted.Node.prototype = Object.create (ChainList.Node.prototype);
 ChainListSorted.Node.prototype.extend({
 	constructor: ChainListSorted.Node,
 	insert: function(elem) {
-		return this.list().insert(elem);
+		return this._list.insert(elem);
 	}
 });

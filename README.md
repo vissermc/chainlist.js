@@ -38,12 +38,14 @@ List-only functions
   Constructor, where a parent aggregator can be supplied which can be accessed using 'list.parent()'.
 * <code>ChainListSorted( parent, compareFunc )</code>  
   Constructor for a sorted ChainList, where the compareFunc(a,b) will determine where the element will be placed: before the first element b where the function returns a positive number.
-* <code>empty ()</code>  
+* <code>parent ()</code>  
+  Returns the parent object, or itself, if parent is null/undefined.
+* <code>setParent ()</code>  
+  Sets the parent object.
+* <code>clear ()</code>  
   Removes all elements from the list.
 * <code>count ()</code>
   Returns the amount of elements in the list (in constant time).
-* <code>clone ()</code>  
-  Returns a copy of the list.
 * <code>insertAt ( index,elem )</code>  
   Inserts at index 'index', starting from zero, the element in this list and returns the created node. Negative indices will insert backwards, where -1 will append the item.
 * <code>removeAt ( index )</code>
@@ -52,55 +54,76 @@ List-only functions
 Node-only functions
 -------------------
 * <code>ChainList.Node ( prev, elem *optional* )</code>
-* <code>list ()</code>
+  Constructor. Adds a node after 'prev'. It will be correctly inserted in the list between the other nodes.
 * <code>elem ()</code>
+  Returns the element object, or itself, if the element is null/undefined.
 * <code>remove ()</code>
+  Removes this node from the list
 * <code>setElem ( val )</code>
+  Changes the element.
 
 Common functions
 -------------------
-* <code>parent ()</code>
-* <code>setParent ( val )</code>
+* <code>first ()</code>
 * <code>last ()</code>
-* <code>takeRange ( start,end )</code>
-* <code>take ( list )</code>
-* <code>takeSome ( list,count )</code>
-* <code>cloneRange ( end )</code>
-* <code>cloneSome ( count )</code>
-* <code>shiftRange ( end )</code>
-* <code>shiftSome ( count )</code>
-* <code>shift ()</code>
-* <code>slice ( begin,end )</code>
-* <code>splice ( index,cutCount,elemToInsert1 )</code>
-* <code>pop ()</code>
-* <code>insert ( elem )</code>
-* <code>insertArray ( elems )</code>
-* <code>unshift ()</code>  
-	inserts elem at the begin of the list
-	return new length property.	
-* <code>push ( elem1, ..., elemN )</code>  
-	inserts elem at the end of the list
-	return new length property.
-* <code>indexOf ( node )</code>
-* <code>indexOfElem ( elem )</code>
-* <code>lastIndexOfElem ( elem )</code>
 * <code>index ( n )</code>  
-	In case link is a list, it returns the n'th node, or if n is negative, returns (count - n)'th node.
-	Else, it returns n'th successor or -n'th predecessor. This list itself is never returned, not does it wrap around.
+  In case link is a list, it returns the n'th node, or if n is negative, returns (count - n)'th node.
+  Else, it returns n'th successor or -n'th predecessor. This list itself is never returned, not does it wrap around.
+* <code>selfIndex ()</code> 
+  Returns index of the node, or -1 if object is the list.
 * <code>get ( n )</code>  
-	In case link is a list, it returns the n'th elem, or if n is negative, returns (count - n)'th elem.
-	Else, it returns n'th successor or -n'th predecessor. 
-	It will not wrap around.
+  In case link is a list, it returns the n'th elem, or if n is negative, returns (count - n)'th elem.
+  Else, it returns n'th successor or -n'th predecessor. 
+  It will not wrap around.
+* <code>takeRange ( start,end )</code>
+  takes and inserts a range of nodes from another list
+* <code>take ( list )</code>
+  takes and inserts (the rest of) another list
+* <code>takeSome ( list,count )</code>
+  takes and inserts certain amount of nodes.
+* <code>clone ()</code>  
+  Returns a copy of (the rest of) the list.
+* <code>cloneRange ( end )</code>
+  Creates a new list of a range of nodes.
+* <code>cloneSome ( count )</code>
+  Creates a new list of a certain amount of nodes.
+* <code>shiftRange ( end )</code>
+  Removes a range of nodes
+* <code>shiftSome ( count )</code>
+  Removes the certain amount of node
+* <code>shift ()</code>
+  Removes the current node
+* <code>slice ( begin,end )</code>
+  Clones a subset of nodes in a new list.
+* <code>splice ( index,cutCount,elemToInsert1 )</code>
+  Removes nodes and inserts elements aggregrated in new nodes, and returns the removed nodes as a list.
+* <code>pop ()</code>
+  Removes the last node
+* <code>insert ( elem )</code>
+  Inserts a single element by aggregating it in a new node.
+* <code>insertArray ( elems )</code>
+  InsertS multiple elements by aggregating them in new node.
+* <code>unshift (elem1...)</code>  
+  Inserts elems by aggregating then in new nodes, at the begin of the list
+  return new length property.	
+* <code>push ( elem1, ..., elemN )</code>  
+  Inserts elems by aggregating then in new nodes, at the end of the list
+  return new length property.
+* <code>indexOf ( node )</code>
+  Returns the position of the node, or -1 if it cannot be found.
+* <code>indexOfElem ( elem )</code>
+  Returns the position of the element, or -1 if it cannot be found.
+* <code>lastIndexOfElem ( elem )</code>
 * <code>indexLink ( n )</code>  
-	returns n'th successor or -n'th predecessor node. This list itself is also link that might be returned. This function wraps around.
+  Returns n'th successor or -n'th predecessor link. This list itself is also link that might be returned. This function wraps around.
 * <code>nextLink ()</code>  
-	returns the next link, i.e. either a node or the container.
+  Returns the next link, i.e. either a node or the list.
 * <code>prevLink ()</code>  
-	returns the previous link, i.e. either a node or the container.
+  Returns the previous link, i.e. either a node or the list.
 * <code>next ()</code>  
-	returns the next node, or null if it was the last.
+  returns the next node, or null if it was the last.
 * <code>prev ()</code>  
-	returns the previous link, or null if it was the first.
+  returns the previous link, or null if it was the first.
 * <code>countRange ( end )</code>
 * <code>isList ()</code>
 * <code>reverse ()</code>

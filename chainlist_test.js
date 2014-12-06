@@ -193,7 +193,7 @@ function chainlist_test() {
 			l2.takeRange(l,l.indexPos(1));
 			assert_equal(l2.toArray(),["a"]);
 			testContent(l,["b","c"]);
-			l2.empty();
+			l2.clear();
 			assert_equal(l2.toArray(),[]);
 			l2 = l.shiftRange(l._next);
 			assert_equal(l2.toArray(),[]);
@@ -204,7 +204,7 @@ function chainlist_test() {
 			testContent(l, ["a","c"]);
 			var cl=l.clone();
 			assert_equal(cl.toArray(),["a","c"]);
-			cl.empty();
+			cl.clear();
 			assert_equal(cl.toArray(),[]);
 			testContent(l, ["a","c"]);
 			l.insertArray(["d","e"]);
