@@ -38,28 +38,18 @@ function ChainList(parent,compareFunc) {
 	this._compareFunc = compareFunc
 }
 
-ChainList.Link = function(prev, elem/*optional*/) { // A class captured in the ChainList namespace, which is also the base class of a Linked List
+ChainList.Link = function(prev) { // A class captured in the ChainList namespace, which is also the base class of a Linked List
 	var t=prev._next;
 	prev._next=this;
 	this._prev=prev;
 	this._next=t;
 	t._prev = this;
-	this._elem=elem||this;
 	this._list = prev._list;
 	this._list._length++;
 }
 
 ChainList.Link.prototype={
 	constructor: ChainList.Link,
-
-	//----- parent functions -----
-
-	parent: function() {
-		return this._list._parent;
-	},
-	setParent: function(val) {
-		_list._parent = val;
-	},
 
 	//----- list functions -----
 
@@ -168,7 +158,6 @@ ChainList.Link.prototype={
 	
 	//----- elem functions -----
 	
-	setElem: function(val) { this._elem = val; },
 	indexOfElem: function(elem) {
 		var r= this.forEach(function(i,index,n) {
 			if (i==elem)
@@ -279,8 +268,9 @@ ChainList.Link.prototype={
 };
 ChainList.Link.prototype.get = ChainList.Link.prototype.indexElem;
 
-ChainList.Node = function(prev, elem) {
-	ChainList.Link.call(this, prev, elem);
+ChainList.Node = function(prev, elem/*optional*/) {
+	ChainList.Link.call(this, prev);
+	this._elem=elem||this;
 };
 
 ChainList.Node.prototype = Object.create (ChainList.Link.prototype);
@@ -299,6 +289,7 @@ ChainList.Node.prototype.extend({
 	firstPos: function() { return this; },
 	//----- elem functions -----
 	elem: function() { return this._elem; },
+	setElem: function(val) { this._elem = val; },
 });
 
 ChainList.prototype = Object.create (ChainList.Link.prototype);
@@ -306,7 +297,13 @@ ChainList.prototype.extend({
 	constructor: ChainList,
 	_isList: true,
 	list: function() { return this; },
-	empty: ChainList.Link.prototype.truncate,
+	parent: function() {
+		return this._parent;
+	},
+	setParent: function(val) {
+		this._parent = val;
+	},
+	clear: ChainList.Link.prototype.truncate,
 	truncate: function() {},
 	count: function() { return this._length; },
 	clone: function() { return this.cloneRange(this);},

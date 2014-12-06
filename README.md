@@ -5,12 +5,13 @@ Use this container type when the elements needs quick access to its siblings and
 
 It is implemented as a doubly linked list, therefore navigating n elements away takes O(n) time. Additionally, there is fast (O(1)) access to the parent list, the last element, and the element count.
 
-Concrete elements can either inherit from ChainList.Node or aggregate it by passing itself as parameter, and adding the generated node as a field.
-Similarly, a concrete container can either inherit from ChainList or aggregate it.
-
-ChainList inherits from ChainList.Node as well, being a link in the list itself. Some functions, such as 'indexLink', 'nextLink', and 'prevLink' can reach this container node.
-
+Both the list (ChainList) and its nodes (ChainList.Node) inherit from ChainList.Link. 
+Concrete elements can either inherit from ChainList.Node or aggregate it by passing itself as parameter (see dashed 'elem' in diagram).
+Similarly, a concrete container can either inherit from ChainList or aggregate it (see dashed 'parent' in diagram).
+Some functions, such as 'indexLink', 'nextLink', and 'prevLink', traverse over all links.
 A lot of functions are both available from a node and a container.
+
+![uml.png]
 
 Also available, a sorted variant of ChainList called ChainListSorted. It does not have a unshift, push, or insertAt function. Only insert and insertArray can be used to insert elements. They will be inserted at the correct sorted location according the comparison function supplied to the constructor.
 
