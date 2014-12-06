@@ -11,7 +11,7 @@ Similarly, a concrete container can either inherit from ChainList or aggregate i
 Some functions, such as 'indexLink', 'nextLink', and 'prevLink', traverse over all links.
 A lot of functions are both available from a node and a container.
 
-![uml.png]
+![UML](uml.png)
 
 Also available, a sorted variant of ChainList called ChainListSorted. It does not have a unshift, push, or insertAt function. Only insert and insertArray can be used to insert elements. They will be inserted at the correct sorted location according the comparison function supplied to the constructor.
 
