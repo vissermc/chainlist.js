@@ -22,14 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 **/
 
-if (typeof Object.create !== 'function') {
-    Object.create = function (o) {
-        function F() {}
-        F.prototype = o;
-        return new F();
-    };
-}
-
 function ChainList(parent,compareFunc) {
 	this._next=this._prev=this;
 	this._parent=parent||this;
@@ -37,6 +29,23 @@ function ChainList(parent,compareFunc) {
 	this._length=0;
 	this._compareFunc = compareFunc
 }
+
+ChainList.extend = function(target, extension) {
+    for (var prop in extension) {
+        if (!target.hasOwnProperty(prop)) {
+            target[prop] = extension[prop];
+        }
+    }
+};
+
+ChainList.subclass = function(constructor, superConstructor, extension) {
+	function surrogateConstructor() {}
+	surrogateConstructor.prototype = superConstructor.prototype;
+	var prototypeObject = new surrogateConstructor();
+	prototypeObject.constructor = constructor;
+	ChainList.extend(prototypeObject, extension);
+	constructor.prototype = prototypeObject;
+};
 
 ChainList.Link = function(prev) { // A class captured in the ChainList namespace, which is also the base class of a Linked List
 	var t=prev._next;
@@ -263,13 +272,6 @@ ChainList.Link.prototype={
 		}
 		return res;
 	},
-	extend: function(props) {
-		for (var prop in props) {
-            if (!this.hasOwnProperty(prop)) {
-                this[prop] = props[prop];
-            }
-		}
-	}
 };
 ChainList.Link.prototype.get = ChainList.Link.prototype.indexElem;
 
@@ -278,10 +280,7 @@ ChainList.Node = function(prev, elem/*optional*/) {
 	this._elem=elem||this;
 };
 
-ChainList.Node.prototype = Object.create (ChainList.Link.prototype);
-
-ChainList.Node.prototype.extend({
-	constructor: ChainList.Node,
+ChainList.subclass(ChainList.Node, ChainList.Link, {
 	// ----- list functions -----
 	remove: function() {
 		return this.shiftSome(1).index(0);
@@ -297,9 +296,7 @@ ChainList.Node.prototype.extend({
 	setElem: function(val) { this._elem = val; },
 });
 
-ChainList.prototype = Object.create (ChainList.Link.prototype);
-ChainList.prototype.extend({
-	constructor: ChainList,
+ChainList.subclass(ChainList, ChainList.Link, {
 	_isList: true,
 	list: function() { return this; },
 	setParent: function(val) {
@@ -341,9 +338,7 @@ ChainListSorted.defaultCompareFunc = function(a,b) {
 	return a-b;
 };
 
-ChainListSorted.prototype = Object.create (ChainList.prototype);
-ChainListSorted.prototype.extend({
-	constructor: ChainListSorted,
+ChainList.subclass(ChainListSorted, ChainList, {
 	insert: function(elem) {
 		var node = this.forEach(function(e,index,node) {
 			if (this._compareFunc(elem,e)<=0)
@@ -367,10 +362,7 @@ ChainListSorted.Node = function(prev, elem) {
 	ChainList.Node.call(this,prev,elem);
 };
 
-ChainListSorted.Node.prototype = Object.create (ChainList.Node.prototype);
-
-ChainListSorted.Node.prototype.extend({
-	constructor: ChainListSorted.Node,
+ChainList.subclass(ChainListSorted.Node, ChainList.Node, {
 	insert: function(elem) {
 		return this._list.insert(elem);
 	}
