@@ -38,15 +38,19 @@ ChainList.extend = function(target, extension) {
     }
 };
 
+ChainList.class = function(constructor, extension, staticExtension) {
+	ChainList.extend(constructor.prototype, extension);
+	ChainList.extend(constructor, staticExtension);
+};
+
 ChainList.subclass = function(constructor, superConstructor, extension, staticExtension) {
 	function surrogateConstructor() {}
 	surrogateConstructor.prototype = superConstructor.prototype;
 	var prototypeObject = new surrogateConstructor();
 	prototypeObject.constructor = constructor;
-	ChainList.extend(prototypeObject, extension);
 	ChainList.extend(constructor, superConstructor);
-	ChainList.extend(constructor, staticExtension);
 	constructor.prototype = prototypeObject;
+	ChainList.class(constructor, extension, staticExtension);
 };
 
 ChainList.Link = function(prev) { // A class captured in the ChainList namespace, which is also the base class of a Linked List
