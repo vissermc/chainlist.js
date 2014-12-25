@@ -183,6 +183,10 @@ function chainlist_test() {
 			l.insert("c");
 			testContent(l,["a","c"]);
 
+            l=makeList(['a','b'],'p');
+			l.first().insert("c");
+			testContent(l, ["c","a","b"]);
+
 			l=makeList(['a','b'],'p');
 			l.last().insert("c");
 			testContent(l, ["a","c","b"]);

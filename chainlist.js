@@ -32,18 +32,20 @@ function ChainList(parent,compareFunc) {
 
 ChainList.extend = function(target, extension) {
     for (var prop in extension) {
-        if (!target.hasOwnProperty(prop)) {
+        if (extension.hasOwnProperty(prop) && prop !== 'prototype' ) {
             target[prop] = extension[prop];
         }
     }
 };
 
-ChainList.subclass = function(constructor, superConstructor, extension) {
+ChainList.subclass = function(constructor, superConstructor, extension, staticExtension) {
 	function surrogateConstructor() {}
 	surrogateConstructor.prototype = superConstructor.prototype;
 	var prototypeObject = new surrogateConstructor();
 	prototypeObject.constructor = constructor;
 	ChainList.extend(prototypeObject, extension);
+	ChainList.extend(constructor, superConstructor);
+	ChainList.extend(constructor, staticExtension);
 	constructor.prototype = prototypeObject;
 };
 
@@ -322,21 +324,18 @@ ChainList.subclass(ChainList, ChainList.Link, {
 		assert_equal(count,this.count());
 	},
 	_initClone: function() { return new ChainList(); }
+}, {
+	fromArray: function(array,parent) {
+		var ll = new ChainList(parent);
+		ll.insertArray(array);
+		return ll;
+	},
 });
-ChainList.fromArray = function(array,parent) {
-	var ll = new ChainList(parent);
-	ll.insertArray(array);
-	return ll;
-}
 
 function ChainListSorted(parent,compareFunc) {
 	ChainList.call(this,parent);
 	this._compareFunc = compareFunc || (parent && parent.compareFunc) || ChainListSorted.defaultCompareFunc;
 }
-
-ChainListSorted.defaultCompareFunc = function(a,b) {
-	return a-b;
-};
 
 ChainList.subclass(ChainListSorted, ChainList, {
 	insert: function(elem) {
@@ -350,17 +349,19 @@ ChainList.subclass(ChainListSorted, ChainList, {
 	unshift: null, //disable
 	push: null, //disable
 	_initClone: function() { return new ChainListSorted(null,this._compareFunc); }
+}, {
+	defaultCompareFunc: function(a,b) {
+		return a-b;
+	},
+	fromArray: function(array,parent,compareFunc) {
+		var ll = new ChainListSorted(parent,compareFunc);
+		ll.insertArray(array);
+		return ll;
+	},
+	Node: function(prev, elem) {
+		ChainList.Node.call(this,prev,elem);
+	},
 });
-
-ChainListSorted.fromArray = function(array,parent,compareFunc) {
-	var ll = new ChainListSorted(parent,compareFunc);
-	ll.insertArray(array);
-	return ll;
-};
-
-ChainListSorted.Node = function(prev, elem) {
-	ChainList.Node.call(this,prev,elem);
-};
 
 ChainList.subclass(ChainListSorted.Node, ChainList.Node, {
 	insert: function(elem) {
